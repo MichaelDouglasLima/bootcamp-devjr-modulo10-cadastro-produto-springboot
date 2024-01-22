@@ -1,6 +1,5 @@
 package com.abutua.productbackend.resources;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,29 +17,21 @@ import com.abutua.productbackend.repositories.CategoryRepository;
 @RestController
 @CrossOrigin
 public class CategoryController {
-    
-    // private List<Category> categories = Arrays.asList(  new Category(1, "Produção Própria"),
-    //                                                     new Category(2, "Nacional"),
-    //                                                     new Category(3, "Importado"),
-    //                                                     new Category(4, "Premium")
-    // );
 
     @Autowired
     private CategoryRepository categoryRepository;
 
-    // @GetMapping("categories/{id}")
-    // public ResponseEntity<Category> getCategory(@PathVariable int id){
-        
-    //     Category cat = categories.stream()
-    //                             .filter(p -> p.getId() == id)
-    //                             .findFirst()
-    //                             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+    @GetMapping("categories/{id}")
+    public ResponseEntity<Category> getCategory(@PathVariable int id) {
 
-    //     return ResponseEntity.ok(cat);
-    // }
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+
+        return ResponseEntity.ok(category);
+    }
 
     @GetMapping("categories")
-    public List<Category> getCategories(){
+    public List<Category> getCategories() {
         return categoryRepository.findAll();
     }
 }
