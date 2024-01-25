@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,13 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.abutua.productbackend.models.Category;
 import com.abutua.productbackend.models.Product;
-import com.abutua.productbackend.repositories.CategoryRepository;
-import com.abutua.productbackend.repositories.ProductRepository;
 import com.abutua.productbackend.services.ProductService;
 
 @RestController
@@ -28,18 +23,12 @@ import com.abutua.productbackend.services.ProductService;
 public class ProductController {
 
     @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
     private ProductService productService;
 
     @PostMapping("products")
     public ResponseEntity<Product> save(@RequestBody Product product) {
         
-        product = productRepository.save(product);
+        product = productService.save(product);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -64,14 +53,12 @@ public class ProductController {
     @DeleteMapping("products/{id}")
     public ResponseEntity<Void> removeProduct(@PathVariable int id) {
         productService.deleteById(id);
-        
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("products/{id}")
     public ResponseEntity<Void> updateProduct(@PathVariable int id, @RequestBody Product productUpdate) {
         productService.update(id, productUpdate);
-
         return ResponseEntity.ok().build();
     }
 

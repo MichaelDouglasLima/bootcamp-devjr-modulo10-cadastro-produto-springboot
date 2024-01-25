@@ -35,16 +35,17 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public void deleteById(int id) {
-        Product product = productRepository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+    public Product save(Product product) {
+        return productRepository.save(product);
+    }
 
+    public void deleteById(int id) {
+        Product product = getById(id);
         productRepository.delete(product);
     }
 
     public void update(@PathVariable int id, @RequestBody Product productUpdate) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+        Product product = getById(id);
 
         if (productUpdate.getCategory() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category can not be empty");
