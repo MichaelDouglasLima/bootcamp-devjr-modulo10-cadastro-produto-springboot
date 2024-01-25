@@ -21,6 +21,7 @@ import com.abutua.productbackend.models.Category;
 import com.abutua.productbackend.models.Product;
 import com.abutua.productbackend.repositories.CategoryRepository;
 import com.abutua.productbackend.repositories.ProductRepository;
+import com.abutua.productbackend.services.ProductService;
 
 @RestController
 @CrossOrigin
@@ -31,6 +32,9 @@ public class ProductController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ProductService productService;
 
     @PostMapping("products")
     public ResponseEntity<Product> save(@RequestBody Product product) {
@@ -48,50 +52,26 @@ public class ProductController {
 
     @GetMapping("products/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable int id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
-
+        Product product = productService.getById(id);
         return ResponseEntity.ok(product);
     }
 
     @GetMapping("products")
     public List<Product> getProducts() {
-        return productRepository.findAll();
+        return productService.getAll();
     }
 
     @DeleteMapping("products/{id}")
     public ResponseEntity<Void> removeProduct(@PathVariable int id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
-
-        productRepository.delete(product);
+        productService.deleteById(id);
         
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("products/{id}")
     public ResponseEntity<Void> updateProduct(@PathVariable int id, @RequestBody Product productUpdate) {
+        productService.update(id, productUpdate);
 
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
-
-        if (productUpdate.getCategory() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category can not be empty");
-        }
-        
-        Category category = categoryRepository.findById(productUpdate.getCategory().getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
-
-
-        product.setDescription(productUpdate.getDescription());
-        product.setName(productUpdate.getName());
-        product.setPrice(productUpdate.getPrice());
-        product.setNewProduct(productUpdate.isNewProduct());
-        product.setPromotion(productUpdate.isPromotion());
-        product.setCategory(category);
-
-        productRepository.save(product);
-        
         return ResponseEntity.ok().build();
     }
 
