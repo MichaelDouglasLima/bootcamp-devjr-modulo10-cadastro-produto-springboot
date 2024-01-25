@@ -16,14 +16,14 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public List<Category> getAll() {
-        return categoryRepository.findAll();
-    }
-
     public Category getById(int id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
         
         return category;
+    }
+
+    public List<Category> getAll() {
+        return categoryRepository.findAll();
     }
 }
